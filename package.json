@@ -1,0 +1,15 @@
+{
+  "name": "imd3901_a2_multiplatform",
+  "version": "1.0.0",
+  "description": "An experience that explores multi-platform interactions",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.18.2"
+  }
+}
