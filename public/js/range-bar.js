@@ -3,7 +3,7 @@ AFRAME.registerComponent('range-bar', {
         value: {type: 'number', default: 0}
     },
     init: function () {
-        CONTEXT_AF = this
+        const CONTEXT_AF = this
 
         CONTEXT_AF.data.value = document.get
     }

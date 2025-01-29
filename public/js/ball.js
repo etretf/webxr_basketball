@@ -3,12 +3,20 @@ AFRAME.registerComponent('ball', {
         force: {type: 'number', default: 0}
     },
     init: function () {
-
-        this.startVec = new THREE.Vector3();
-        this.sourceEl = document.querySelector('#camera');
+        const CONTEXT_AF = this
+        CONTEXT_AF.startVec = new THREE.Vector3();
+        CONTEXT_AF.camera = document.querySelector('#camera');
 
         this.el.addEventListener('click', function () {
-            console.log('clicked')
+            const cameraChildren = CONTEXT_AF.camera.getChildren()
+            debugger
+
+            const newBall = document.createElement('a-sphere')
+            newBall.setAttribute('position', '0 -0.47 -0.57')
+            newBall.setAttribute('radius', '0.2')
+            newBall.classList.add('hold-ball')
+            CONTEXT_AF.camera.appendChild(newBall)
+            CONTEXT_AF.el.remove()
         })
 
         this.el.addEventListener('mousedown', function () {

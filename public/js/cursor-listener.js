@@ -5,7 +5,7 @@ AFRAME.registerComponent('cursor-listener', {
         isDecrementing: {type: 'boolean', default: false},
     },
     init: function () {
-        CONTEXT_AF = this
+        const CONTEXT_AF = this
 
         CONTEXT_AF.rangeBar = document.querySelector('#range-bar')
         CONTEXT_AF.oldRangeBarPos = CONTEXT_AF.rangeBar.getAttribute('position')
@@ -35,31 +35,31 @@ AFRAME.registerComponent('cursor-listener', {
         })
     },
     tick: function () {
-        if (CONTEXT_AF.data.isChanging === true) {
+        if (this.data.isChanging === true) {
             this.calculateRangeValue()
         }
 
-        if (CONTEXT_AF.data.isChanging === false) {
-            CONTEXT_AF.data.value = 0
-            CONTEXT_AF.data.isDecrementing = false
+        if (this.data.isChanging === false) {
+            this.data.value = 0
+            this.data.isDecrementing = false
         }
 
-        if (CONTEXT_AF.data.value >= 0.07) {
-            CONTEXT_AF.data.isDecrementing = true
+        if (this.data.value >= 0.07) {
+            this.data.isDecrementing = true
         }
 
-        if (CONTEXT_AF.data.value <= -0.07) {
-            CONTEXT_AF.data.isDecrementing = false
+        if (this.data.value <= -0.07) {
+            this.data.isDecrementing = false
         }
 
-        CONTEXT_AF.rangeBar.setAttribute('position', `${CONTEXT_AF.rangeBarPos.x + this.convertToUIRange(CONTEXT_AF.data.value)} ${CONTEXT_AF.rangeBarPos.y} ${CONTEXT_AF.rangeBarPos.z}`)
+        this.rangeBar.setAttribute('position', `${this.rangeBarPos.x + this.convertToUIRange(this.data.value)} ${this.rangeBarPos.y} ${this.rangeBarPos.z}`)
     },
 
     calculateRangeValue: function () {
-        if (!CONTEXT_AF.data.isDecrementing) {
-            CONTEXT_AF.data.value += 0.001
+        if (!this.data.isDecrementing) {
+            this.data.value += 0.001
         } else {
-            CONTEXT_AF.data.value -= 0.001
+            this.data.value -= 0.001
         }
     },
 
