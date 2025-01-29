@@ -5,50 +5,89 @@
       <meta name="description" content="Hello, WebXR! - A-Frame">
       <script src="https://aframe.io/releases/1.6.0/aframe.min.js"></script>
       <script src="https://unpkg.com/aframe-environment-component@1.3.3/dist/aframe-environment-component.min.js"></script>
+      <script src="https://cdn.jsdelivr.net/gh/MozillaReality/ammo.js@8bbc0ea/builds/ammo.wasm.js"></script>
       <script src="https://cdn.jsdelivr.net/gh/c-frame/aframe-physics-system@v4.2.2/dist/aframe-physics-system.min.js"></script>
-      <script src="js/bubble.js"></script>
       <script src="js/ball.js"></script>
       <script src="js/cursor-listener.js"></script>
+      <script src="js/range-bar.js"></script>
     </head>
     <body>
-      <a-scene physics="debug: true;">
+      <a-scene physics="driver: ammo; debug: true; debugDrawMode: 1;">
+        <!-- Assets -->
+
+        <a-assets timeout="5000">
+          <a-asset-item
+            id="hoop_model"
+            response-type="arraybuffer"
+            src="assets/hoop.glb"
+          ></a-asset-item>
+          <a-asset-item
+            id="court_model"
+            response-type="arraybuffer"
+            src="assets/court.glb"
+          ></a-asset-item>
+        </a-assets>
+
+        <!-- Camera -->
+        <a-entity camera wasd-controls look-controls position="0 1.6 0">
+          <a-entity cursor="rayOrigin:mouse;" raycaster="far:20; interval:200; objects:.interactive"></a-entity>
+          <a-plane
+            position="0 -0.7 -1"
+            material="color: green;"
+            shader="flat"
+            height="0.1"
+            width="0.5"
+          ></a-plane>
+          <a-plane
+            id="range-bar"
+            position="-0.23 -0.7 -0.999"
+            material="color: red;"
+            shader="flat"
+            height="0.1"
+            width="0.05"
+          ></a-plane>
+        </a-entity>
+
+        <!-- Scene entities -->
+        <a-entity
+          id="basketball_court"
+          gltf-model="#court_model"
+          position="0 0.1 0"
+        ></a-entity>
+        <a-torus
+          id="mytorus"
+          ammo-body="type: static; restitution: 0.5"
+          ammo-shape="type: mesh"
+          emitCollisionEvents="true"
+          rotation="90 0 0"
+          position="0 1 -5"
+          material="color: rgb(240, 89, 19);"
+          radius="0.45"
+          radius-tubular="0.03"
+          segmentsRadial="24"
+          segmentsTubular="24"
+        >
+          <a-cylinder
+            material="color: white;"
+            rotation="-90 0 0"
+            position="0 0 0.15"
+            radius="0.45"
+            height="0.06"
+          ></a-cylinder>
+        </a-torus>
         <a-sphere
           ball
-          dynamic-body="shape: sphere;"
+          cursor-listener
+          ammo-body="type: dynamic; restitution: 1"
+          ammo-shape="type: sphere"
           class="interactive"
-          position="0 3 -3"
-          radius="0.3"
+          position="0.1 3 -4.7"
+          radius="0.2"
         ></a-sphere>
         </a-entity>
-        <a-plane
-          static-body
-          color="grey"
-          height="20"
-          width="20"
-          position="0 1 0"
-          rotation="-90 0 0">
-        </a-plane>
-        <a-entity environment></a-entity>
-      <a-scene>
         <a-entity
-          id="camera"
-          camera
-          wasd-controls
-          look-controls
-          position="0 1.6 0"
-        >
-          <a-entity
-            cursor="rayOrigin:mouse;"
-            raycaster="far:20; interval:200; objects:.interactive;"
-          ></a-entity>
-        </a-entity>
-        <a-box
-          position="0 0.4 -2"
-          cursor-listener
-          id="testbox"
-          class="interactive"
-        ></a-box>
-        <a-entity environment></a-entity>
+          environment="groundColor: #519444; groundTexture: none;"
+        ></a-entity>
       </a-scene>
     </body>
 </html>
