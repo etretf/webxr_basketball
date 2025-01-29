@@ -11,6 +11,7 @@
       <script src="js/cursor-listener.js"></script>
       <script src="js/range-bar.js"></script>
       <script src="js/hoop-score.js"></script>
+      <script src="js/player.js"></script>
     </head>
     <body>
       <a-scene physics="driver: ammo; debug: true; debugDrawMode: 1;">
@@ -40,8 +41,8 @@
         </a-assets>
 
         <!-- Camera -->
-        <a-entity id="camera" camera wasd-controls look-controls position="0 1.6 0">
-          <a-entity cursor="rayOrigin:mouse;" raycaster="far:20; interval:200; objects:.interactive"></a-entity>
+        <a-entity id="player" player camera wasd-controls look-controls position="0 1.6 0">
+          <a-entity id="player-raycaster" cursor="rayOrigin:mouse;" raycaster="far:20; interval:200; objects:.interactive"></a-entity>
           <a-plane
             position="0 -0.7 -1"
             material="color: green;"
@@ -96,6 +97,7 @@
           material="color: #8eb8d4;"
         >
           <a-sphere
+            ball
             class="interactive"
             radius="0.2"
             position="0 1 0"
