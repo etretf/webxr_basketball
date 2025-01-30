@@ -44,7 +44,7 @@
         </a-assets>
 
         <!-- Camera -->
-        <a-entity id="player" player camera wasd-controls look-controls position="0 1.6 0">
+        <a-entity id="player" player camera wasd-controls look-controls position="0 1.6 -1.5">
           <a-entity id="player-raycaster" cursor="rayOrigin:mouse;" raycaster="far:20; interval:200; objects:.interactive"></a-entity>
           <a-triangle
             id="range-arrow"
@@ -130,7 +130,7 @@
           class="interactive"
           rackbox
           gltf-model="#rack_model"
-          position="-1.5 0.09 -1.5"
+          position="-1.5 0.09 -3"
           rotation="0 -30 0"
           material="color: #8eb8d4;"
         >

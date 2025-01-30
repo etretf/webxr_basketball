@@ -1,5 +1,5 @@
-const RANGE_UPPER = 0.5
-const RANGE_LOWER = -0.5
+const RANGE_UPPER = 1
+const RANGE_LOWER = 0
 const MAX_LIFETIME = 500
 
 
@@ -10,7 +10,8 @@ AFRAME.registerComponent('active-ball', {
         isDecrementing: {type: 'boolean', default: false},
         hasScored: {type: 'boolean', default: false},
         isHeld: {type: 'boolean', default: true},
-        releaseTime: {type: 'number', default: 0}
+        releaseTime: {type: 'number', default: 0},
+        hitFloor: {type: 'boolean', default: false}
     },
     init: function () {
         const CONTEXT_AF = this
@@ -22,19 +23,20 @@ AFRAME.registerComponent('active-ball', {
 
         CONTEXT_AF.objPos = CONTEXT_AF.el.object3D.position
 
-        CONTEXT_AF.el.addEventListener('click',  function () {
+        CONTEXT_AF.el.addEventListener('mouseup',  function () {
             CONTEXT_AF.el.setAttribute('ammo-body', {type: 'dynamic', restitution: 1})
             CONTEXT_AF.el.setAttribute('ammo-shape', {type: 'sphere'})
             CONTEXT_AF.el.setAttribute('obb-collider', {})
 
             const adjustedVal = CONTEXT_AF.data.value + 0.5
-            const yForceAdd = 4 + adjustedVal * 3
-            const zForceAdd = -2 - adjustedVal * 5
+            const yForceAdd = adjustedVal * 5
+            const zForceAdd = -2 + adjustedVal * 3
 
-            const quat = CONTEXT_AF.playerEl.object3D.quaternion
-            const vector = new THREE.Vector3(0, yForceAdd, zForceAdd)
-            console.log(vector)
-            vector.applyQuaternion(quat)
+            const vector = new THREE.Vector3(0, 0, 0)
+            CONTEXT_AF.el.object3D.getWorldDirection(vector)
+            vector.x = vector.x * -1
+            vector.y = (vector.y * -1) + yForceAdd
+            vector.z = (vector.z * -1) - zForceAdd
             const force = new Ammo.btVector3(vector.x, vector.y, vector.z)
             const pos = new Ammo.btVector3(CONTEXT_AF.objPos.x, CONTEXT_AF.objPos.y, CONTEXT_AF.objPos.z);
             CONTEXT_AF.el.body.applyImpulse(force, pos);
@@ -78,6 +80,7 @@ AFRAME.registerComponent('active-ball', {
             this.data.releaseTime++
         }
 
+        console.log(this.data.value)
         const updatedRangePos = this.calculateRangeIndicatorPos(this.data.value)
         this.rangeBar.setAttribute('position', updatedRangePos)
     },
@@ -95,6 +98,6 @@ AFRAME.registerComponent('active-ball', {
     },
 
     calculateRangeIndicatorPos: function (val) {
-        return `${this.rangeBarPos.x} ${this.rangeBarPos.y + val * 0.01} ${this.rangeBarPos.z}`
+        return `${this.rangeBarPos.x} ${this.rangeBarPos.y + val * 0.02} ${this.rangeBarPos.z}`
     }
 })
