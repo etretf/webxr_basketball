@@ -7,11 +7,14 @@
       <script src="https://unpkg.com/aframe-environment-component@1.3.3/dist/aframe-environment-component.min.js"></script>
       <script src="https://cdn.jsdelivr.net/gh/MozillaReality/ammo.js@8bbc0ea/builds/ammo.wasm.js"></script>
       <script src="https://cdn.jsdelivr.net/gh/c-frame/aframe-physics-system@v4.2.2/dist/aframe-physics-system.min.js"></script>
-      <script src="js/ball.js"></script>
-      <script src="js/cursor-listener.js"></script>
+      <script src="js/pickup-ball.js"></script>
+      <script src="js/active-ball.js"></script>
       <script src="js/range-bar.js"></script>
       <script src="js/hoop-score.js"></script>
+      <script src="js/rackbox.js"></script>
       <script src="js/player.js"></script>
+      <script src="js/load-ball.js"></script>
+      <script src="js/shoot.js"></script>
     </head>
     <body>
       <a-scene physics="driver: ammo; debug: true; debugDrawMode: 1;">
@@ -43,21 +46,15 @@
         <!-- Camera -->
         <a-entity id="player" player camera wasd-controls look-controls position="0 1.6 0">
           <a-entity id="player-raycaster" cursor="rayOrigin:mouse;" raycaster="far:20; interval:200; objects:.interactive"></a-entity>
-          <a-plane
-            position="0 -0.7 -1"
-            material="color: green;"
-            shader="flat"
-            height="0.1"
-            width="0.5"
-          ></a-plane>
-          <a-plane
-            id="range-bar"
-            position="-0.23 -0.7 -0.999"
-            material="color: red;"
-            shader="flat"
-            height="0.1"
-            width="0.05"
-          ></a-plane>
+          <a-triangle
+            id="range-arrow"
+            position="0 -0.3 -1"
+            vertex-a="0 0 0"
+            vertex-b="-0.02 -0.05 0"
+            vertex-c="0.02 -0.05 0"
+            material="shader: flat; color: red;"
+            visible="false"
+          ></a-triangle>
         </a-entity>
 
         <!-- Scene entities -->
@@ -66,6 +63,9 @@
           id="skybox"
           material="src:#sky_map; shader: flat;"
         ></a-entity>
+
+        <!-- Court -->
+
         <a-entity
           id="basketball_court"
           gltf-model="#court_model"
@@ -82,6 +82,40 @@
           width="11"
           visible="false"
         ></a-plane>
+
+        <!-- Backboard collider -->
+         
+        <a-box
+          ammo-body="type: static; restitution: 0.5;"
+          ammo-shape="type: box;"
+          geometry="depth: 0.11; height: 0.89; width: 1.63;"
+          position="-0.023 2.73 -5.234"
+        >
+        <!-- Score text -->
+          <a-entity
+            geometry="primitive: plane; width: 0.5; height: 0.5;"
+            material="color: black; side: double"
+            id="score-text"
+            position="1.5 0 0"
+            text="font: roboto; color: red; width: 1.5; align: center; wrapCount: 12;"
+          ></a-entity>
+        </a-box>
+
+        <!-- Shooting ball -->
+
+        <a-sphere
+          id="active-ball"
+          active-ball
+          obb-collider
+          ammo-body="type: dynamic; restitution: 1"
+          ammo-shape="type: sphere"
+          class="interactive"
+          position="0 10 -4.8"
+          radius="0.2"
+        ></a-sphere>
+
+        <!-- Boombox -->
+
         <a-entity
           id="boombox"
           gltf-model="#boombox_model"
@@ -89,45 +123,49 @@
           scale="0.15 0.15 0.15"
           rotation="0 210 0"
         ></a-entity>
+
+        <!-- Ball rack -->
         <a-entity
           id="rack"
+          class="interactive"
+          rackbox
           gltf-model="#rack_model"
           position="-1.5 0.09 -1.5"
           rotation="0 -30 0"
           material="color: #8eb8d4;"
         >
           <a-sphere
-            ball
+            pickup-ball
             class="interactive"
             radius="0.2"
             position="0 1 0"
           ></a-sphere>
           <a-sphere
-            ball
+            pickup-ball
             class="interactive"
             radius="0.2"
             position="0 1 0.45"
           ></a-sphere>
           <a-sphere
-            ball
+            pickup-ball
             class="interactive"
             radius="0.2"
             position="0 1 -0.45"
           ></a-sphere>
           <a-sphere
-            ball  
+            pickup-ball  
             class="interactive"
             radius="0.2"
             position="0 0.5 0"
           ></a-sphere>
           <a-sphere
-            ball  
+            pickup-ball  
             class="interactive"
             radius="0.2"
             position="0 0.5 0.45"
           ></a-sphere>
           <a-sphere
-            ball
+            pickup-ball
             class="interactive"
             radius="0.2"
             position="0 0.5 -0.45"
@@ -136,6 +174,8 @@
 
 
 
+
+        <!-- Hoop -->
         <a-torus
           id="mytorus"
           ammo-body="type: static; restitution: 0.5"
@@ -160,16 +200,6 @@
             height="0.06"
           ></a-cylinder>
         </a-torus>
-        <a-sphere
-          cursor-listener
-          obb-collider
-          ammo-body="type: dynamic; restitution: 1"
-          ammo-shape="type: sphere"
-          class="interactive"
-          position="0 3 -4.683"
-          radius="0.2"
-        ></a-sphere>
-        </a-entity>
         <a-entity
           environment="groundColor: #519444; groundTexture: none;"
         ></a-entity>
