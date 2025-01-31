@@ -2,6 +2,11 @@ AFRAME.registerComponent('teleport-pad', {
     init: function () {
         const CONTEXT_AF = this
 
+        CONTEXT_AF.el.setAttribute('radius', 0.3)
+        CONTEXT_AF.el.setAttribute('height', 0.3)
+        CONTEXT_AF.el.setAttribute('material', {color: 'rgb(0, 128, 0)'})
+        CONTEXT_AF.el.classList.add('interactive')
+        
         CONTEXT_AF.el.setAttribute('animation__mouseenter', {
             property: 'material.color',
             type: 'color',

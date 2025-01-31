@@ -69,6 +69,7 @@
           <audio id="low_metal_hit" src="assets/low_metal_hit.mp3" preload="auto" crossorigin="anonymous"></audio>
           <audio id="high_metal_hit" src="assets/high_metal_hit.mp3" preload="auto" crossorigin="anonymous"></audio>
           <audio id="score" src="assets/score.mp3" preload="auto" crossorigin="anonymous"></audio>
+          <audio id="whoosh" src="assets/whoosh.mp3" preload="auto" crossorigin="anonymous"></audio>
         </a-assets>
 
         <!-- Camera -->
@@ -79,6 +80,7 @@
           look-controls
           position="0 1.6 -1.5"
         >
+          <a-entity id="shoot_sound" sound="src: #whoosh"></a-entity>
           <a-entity id="player-raycaster" cursor="rayOrigin:mouse;" raycaster="far:20; interval:200; objects:.interactive"></a-entity>
           <a-triangle
             id="range-arrow"
@@ -98,55 +100,31 @@
         <a-cylinder
           teleport-pad
           id="tp-start"
-          class="interactive"
           position="0 0 -1.5"
-          height="0.3"
-          radius="0.3"
-          material="color: green;"
         ></a-cylinder>
         <a-cylinder
           teleport-pad
           id="tp-halfcourt"
-          class="interactive"
-          height="0.3"
-          radius="0.3"
-          material="color: green;"
         ></a-cylinder>
         <a-cylinder
           teleport-pad
           id="tp-left"
-          class="interactive"
           position="-2 0 -0.5"
-          height="0.3"
-          radius="0.3"
-          material="color: green;"
         ></a-cylinder>
         <a-cylinder
           teleport-pad
           id="tp-right"
-          class="interactive"
           position="2 0 -0.5"
-          height="0.3"
-          radius="0.3"
-          material="color: green;"
         ></a-cylinder>
         <a-cylinder
           teleport-pad
           id="tp-right"
-          class="interactive"
           position="2 0 -2.5"
-          height="0.3"
-          radius="0.3"
-          material="color: green;"
         ></a-cylinder>
         <a-cylinder
           teleport-pad
           id="tp-right"
-          class="interactive"
           position="3 0 -4.5"
-          height="0.3"
-          radius="0.3"
-          material="color: green;"
         ></a-cylinder>
         <!-- Court -->
 

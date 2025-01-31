@@ -19,6 +19,7 @@ AFRAME.registerComponent('active-ball', {
         CONTEXT_AF.rangeBarPos = CONTEXT_AF.rangeBar.getAttribute('position')
         CONTEXT_AF.playerEl = document.querySelector('#player')
         CONTEXT_AF.playerRayCaster = document.querySelector('#player-raycaster')
+        CONTEXT_AF.shootSound = document.querySelector('#shoot_sound')
 
         CONTEXT_AF.objPos = CONTEXT_AF.el.object3D.position
 
@@ -49,6 +50,8 @@ AFRAME.registerComponent('active-ball', {
                 CONTEXT_AF.playerEl.setAttribute('sound', {src: '#score'})
                 CONTEXT_AF.el.classList.add('thrown-ball')
                 CONTEXT_AF.data.isHeld = false
+
+                CONTEXT_AF.shootSound.components.sound.playSound()
             }
         })
 
