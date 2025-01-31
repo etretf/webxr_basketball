@@ -27,6 +27,7 @@ AFRAME.registerComponent('active-ball', {
                 CONTEXT_AF.el.setAttribute('ammo-body', {type: 'dynamic', restitution: 1})
                 CONTEXT_AF.el.setAttribute('ammo-shape', {type: 'sphere'})
                 CONTEXT_AF.el.setAttribute('obb-collider', {})
+                CONTEXT_AF.el.setAttribute('sound', {src: '#ground_bounce'})
     
                 const adjustedVal = CONTEXT_AF.data.value + 0.5
     
@@ -45,6 +46,8 @@ AFRAME.registerComponent('active-ball', {
                 CONTEXT_AF.rangeBar.setAttribute('position', "0 -0.3 -1")
                 CONTEXT_AF.rangeBar.setAttribute('visible', false)
                 CONTEXT_AF.playerEl.setAttribute('player', {isHoldingBall: false})
+                CONTEXT_AF.playerEl.setAttribute('sound', {src: '#score'})
+                CONTEXT_AF.el.classList.add('thrown-ball')
                 CONTEXT_AF.data.isHeld = false
             }
         })
@@ -53,6 +56,14 @@ AFRAME.registerComponent('active-ball', {
             if (CONTEXT_AF.data.isHeld) {
                 CONTEXT_AF.data.isChanging = true
                 CONTEXT_AF.rangeBar.setAttribute('visible', true)
+            }
+        })
+
+        CONTEXT_AF.el.addEventListener('obbcollisionstarted', function (event) {
+            const isGroundCollision = event.detail.withEl.id === 'court_ground'
+            if (isGroundCollision) {
+                console.log('bounce on ground')
+                CONTEXT_AF.el.components.sound.playSound()
             }
         })
     },

@@ -7,6 +7,7 @@ AFRAME.registerComponent('hoop-score', {
 
         CONTEXT_AF.scoreText = document.querySelector('#score-text')
         CONTEXT_AF.scoreText.setAttribute('text', {value: CONTEXT_AF.data.score})
+        CONTEXT_AF.player = document.querySelector('#player')
 
         CONTEXT_AF.el.addEventListener('obbcollisionstarted', function (event) {
             const collideObj = event.detail.withEl
@@ -22,12 +23,17 @@ AFRAME.registerComponent('hoop-score', {
                 if (hasScored === false) {
                     CONTEXT_AF.data.score++
                     CONTEXT_AF.scoreText.setAttribute('text', {value: CONTEXT_AF.data.score})
+                    CONTEXT_AF.el.components.sound.playSound()
+                    CONTEXT_AF.player.components.sound.playSound()
                 }
             }            
         })
 
         CONTEXT_AF.el.addEventListener('obbcollisionended', function (event) {
-            event.detail.withEl.getAttribute('active-ball').hasScored = true
+            const collideObj = event.detail.withEl
+            if (collideObj.id === 'active_ball') {
+                collideObj.getAttribute('active-ball').hasScored = true
+            }
         })
     }
 })

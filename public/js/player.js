@@ -31,6 +31,10 @@ AFRAME.registerComponent('player', {
 
             el.appendChild(horizontalBar)
             el.appendChild(verticalBar)
+
+            el.setAttribute('sound', {src: '#ball_catch'})
+            el.components.sound.playSound()
+
         } else if (isHoldingBall === false && el.hasLoaded) {
             const crosshairHz = document.querySelector('#crosshair-hz')
             const crosshairVt = document.querySelector('#crosshair-vt')

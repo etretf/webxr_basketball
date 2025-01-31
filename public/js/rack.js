@@ -10,12 +10,11 @@ AFRAME.registerComponent('rack', {
     update: function () {
         if (this.data.ballCount === 0) {
             this.respawnBalls()
+            this.data.ballCount = 6
         }
     },
 
     respawnBalls: function () {
-        console.log('empty')
-
         const rackTop = document.querySelector('#rack-top')
         const rackBottom = document.querySelector('#rack-bottom')
 
@@ -27,7 +26,6 @@ AFRAME.registerComponent('rack', {
             newBall.setAttribute('scale', '0.2 0.2 0.2')
 
             if (i < 3) {
-                console.log('top ball')
                 newBall.setAttribute('position', BALL_POSITIONS[i])
                 rackTop.appendChild(newBall)
             } else {

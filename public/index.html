@@ -9,16 +9,24 @@
       <script src="https://cdn.jsdelivr.net/gh/c-frame/aframe-physics-system@v4.2.2/dist/aframe-physics-system.min.js"></script>
       <script src="js/pickup-ball.js"></script>
       <script src="js/active-ball.js"></script>
-      <script src="js/range-bar.js"></script>
       <script src="js/hoop-score.js"></script>
       <script src="js/rack.js"></script>
       <script src="js/player.js"></script>
-      <script src="js/load-ball.js"></script>
+      <script src="js/sound-collider.js"></script>
+      <script src="js/close-instructions.js"></script>
+      <script src="js/start-experience.js"></script>
 
       <link rel="stylesheet" href="css/user-gesture.css">
     </head>
     <body>
-      <a-scene physics="driver: ammo; debug: true; debugDrawMode: 1;">
+
+      <div id="user-gesture-overlay">
+        <div class="center">
+          <button id="user-gesture-button">Start experience</button>
+        </div>
+      </div>
+
+      <a-scene start-experience physics="driver: ammo; debug: true; debugDrawMode: 1;">
         <!-- Assets -->
 
         <a-assets timeout="1000">
@@ -47,11 +55,29 @@
             response-type="arraybuffer"
             src="assets/basketball.glb"
           ></a-asset-item>
-          <img id="crosshair_img" src="assets/crosshair.svg" style="background-color: transparent;" alt="White crosshair with intersecting horizontal and vertical bar" crossorigin="anonymous">
+          <a-asset-item
+            id="skybox_model"
+            response-type="arraybuffer"
+            src="assets/skybox.glb"
+          ></a-asset-item>
+
+          <!-- Sound and music -->
+          <audio id="ground_bounce" src="assets/basketball_ground_bounce.mp3" preload="auto" crossorigin="anonymous"></audio>
+          <audio id="ball_catch" src="assets/basketball_catch.mp3" preload="auto" crossorigin="anonymous"></audio>
+          <audio id="swish" src="assets/basketball_swish.mp3" preload="auto" crossorigin="anonymous"></audio>
+          <audio id="low_metal_hit" src="assets/low_metal_hit.mp3" preload="auto" crossorigin="anonymous"></audio>
+          <audio id="high_metal_hit" src="assets/high_metal_hit.mp3" preload="auto" crossorigin="anonymous"></audio>
+          <audio id="score" src="assets/score.mp3" preload="auto" crossorigin="anonymous"></audio>
         </a-assets>
 
         <!-- Camera -->
-        <a-entity id="player" player camera wasd-controls look-controls position="0 1.6 -1.5">
+        <a-entity id="player"
+          player
+          camera
+          wasd-controls
+          look-controls
+          position="0 1.6 -1.5"
+        >
           <a-entity id="player-raycaster" cursor="rayOrigin:mouse;" raycaster="far:20; interval:200; objects:.interactive"></a-entity>
           <a-triangle
             id="range-arrow"
@@ -63,12 +89,8 @@
             visible="false"
           ></a-triangle>
         </a-entity>
-        <!-- Scene entities -->
 
-        <a-entity
-          id="skybox"
-          material="src:#sky_map; shader: flat;"
-        ></a-entity>
+        <!-- Scene entities -->
 
         <!-- Court -->
 
@@ -81,6 +103,7 @@
 
         <a-plane
           id="court_ground"
+          obb-collider
           ammo-body="type: static; restitution: 0.8"
           ammo-shape="type: box;"
           position="0 0.13 0"
@@ -93,6 +116,9 @@
         <!-- Backboard collider -->
          
         <a-box
+          sound-collider
+          obb-collider
+          sound="src: #low_metal_hit"
           ammo-body="type: static; restitution: 0.5;"
           ammo-shape="type: box;"
           geometry="depth: 0.11; height: 0.89; width: 1.63;"
@@ -145,21 +171,48 @@
         <a-entity
           id="boombox"
           gltf-model="#boombox_model"
-          position="3 0.01 -5"
+          position="4.38 0.447 -4.86"
+          material="shader: flat"
           scale="0.15 0.15 0.15"
-          rotation="0 210 0"
+          rotation="0 -160 0"
         ></a-entity>
 
         <!-- Ball rack -->
         <a-entity
           id="rack"
-          class="interactive"
           rack
           gltf-model="#rack_model"
           position="-1.5 0.09 -3"
           rotation="0 -30 0"
           material="color: #8eb8d4;"
         >
+          <!-- Instructions UI -->
+
+          <a-plane
+            id="instructions"
+            position="0 2 0"
+            rotation="0 90 0"
+            material="shader: flat;"
+            height="0.7"
+            width="1.5"
+            text="
+              value: Press a ball to pick it up. \n\nHold down on the ball then release to shoot.;
+              color: black;
+              width: 1.4;
+              wrapCount: 30;
+              "
+            >
+            <a-plane
+              close-instructions
+              id="close-instructions"
+              class="interactive"
+              position="-0.6 -0.5 0.001"
+              height="0.15"
+              width="0.3"
+              material="shader: flat;"
+              text="value: Close; color: black; wrapCount: 8; align: center;"
+            ></a-plane>
+        </a-plane>
         <!-- top rack -->
           <a-entity
             id="rack-top"
@@ -221,7 +274,10 @@
 
         <!-- Hoop -->
         <a-torus
-          id="mytorus"
+          id="rim"
+          sound-collider
+          obb-collider
+          sound="src: #high_metal_hit"
           ammo-body="type: static; restitution: 0.5"
           ammo-shape="type: mesh"
           emitCollisionEvents="true"
@@ -237,6 +293,7 @@
           <a-cylinder
             obb-collider
             hoop-score
+            sound="src: #swish"
             material="color: white;"
             rotation="-90 0 0"
             position="0 0 0.2"
