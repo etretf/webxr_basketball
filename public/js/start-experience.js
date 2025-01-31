@@ -1,6 +1,5 @@
 AFRAME.registerComponent('start-experience', {
     init: function () {
-        console.log('scene loaded');
         document.querySelector('#user-gesture-button').style.display = 'block';
 
         const CONTEXT_AF = this

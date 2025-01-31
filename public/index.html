@@ -12,6 +12,7 @@
       <script src="js/hoop-score.js"></script>
       <script src="js/rack.js"></script>
       <script src="js/player.js"></script>
+      <script src="js/teleport-pad.js"></script>
       <script src="js/sound-collider.js"></script>
       <script src="js/close-instructions.js"></script>
       <script src="js/start-experience.js"></script>
@@ -92,6 +93,61 @@
 
         <!-- Scene entities -->
 
+        <!-- Teleport pads -->
+
+        <a-cylinder
+          teleport-pad
+          id="tp-start"
+          class="interactive"
+          position="0 0 -1.5"
+          height="0.3"
+          radius="0.3"
+          material="color: green;"
+        ></a-cylinder>
+        <a-cylinder
+          teleport-pad
+          id="tp-halfcourt"
+          class="interactive"
+          height="0.3"
+          radius="0.3"
+          material="color: green;"
+        ></a-cylinder>
+        <a-cylinder
+          teleport-pad
+          id="tp-left"
+          class="interactive"
+          position="-2 0 -0.5"
+          height="0.3"
+          radius="0.3"
+          material="color: green;"
+        ></a-cylinder>
+        <a-cylinder
+          teleport-pad
+          id="tp-right"
+          class="interactive"
+          position="2 0 -0.5"
+          height="0.3"
+          radius="0.3"
+          material="color: green;"
+        ></a-cylinder>
+        <a-cylinder
+          teleport-pad
+          id="tp-right"
+          class="interactive"
+          position="2 0 -2.5"
+          height="0.3"
+          radius="0.3"
+          material="color: green;"
+        ></a-cylinder>
+        <a-cylinder
+          teleport-pad
+          id="tp-right"
+          class="interactive"
+          position="3 0 -4.5"
+          height="0.3"
+          radius="0.3"
+          material="color: green;"
+        ></a-cylinder>
         <!-- Court -->
 
         <a-entity

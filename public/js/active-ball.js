@@ -62,7 +62,6 @@ AFRAME.registerComponent('active-ball', {
         CONTEXT_AF.el.addEventListener('obbcollisionstarted', function (event) {
             const isGroundCollision = event.detail.withEl.id === 'court_ground'
             if (isGroundCollision) {
-                console.log('bounce on ground')
                 CONTEXT_AF.el.components.sound.playSound()
             }
         })
