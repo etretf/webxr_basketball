@@ -9,22 +9,33 @@ AFRAME.registerComponent('player', {
     update: function () {
         const {data: {isHoldingBall}, el} = this
         if (isHoldingBall === true) {
-            const newRing = document.createElement('a-entity')
-            newRing.setAttribute('position', '0 0 -1')
-            newRing.setAttribute('id', 'range-circle')
-            newRing.setAttribute('geometry', {
-                primitive: 'ring',
-                radiusInner: 0.03,
-                radiusOuter: 0.04
-            })
-            newRing.setAttribute('material', {
+            const horizontalBar = document.createElement('a-plane')
+
+            horizontalBar.setAttribute('position', '0 0 -0.1')
+            horizontalBar.setAttribute('height', 0.001)
+            horizontalBar.setAttribute('width', 0.01)
+            horizontalBar.setAttribute('id', 'crosshair-hz')
+            horizontalBar.setAttribute('material', {
                 shader: 'flat'
             })
-            el.appendChild(newRing)
-            console.log('appended to camera')
+            
+            const verticalBar = document.createElement('a-plane')
+
+            verticalBar.setAttribute('position', '0 0 -0.1')
+            verticalBar.setAttribute('height', 0.01)
+            verticalBar.setAttribute('width', 0.001)
+            verticalBar.setAttribute('id', 'crosshair-vt')
+            verticalBar.setAttribute('material', {
+                shader: 'flat'
+            })
+
+            el.appendChild(horizontalBar)
+            el.appendChild(verticalBar)
         } else if (isHoldingBall === false && el.hasLoaded) {
-            const rangeCircle = document.querySelector('#range-circle')
-            rangeCircle.parentNode.removeChild(rangeCircle)
+            const crosshairHz = document.querySelector('#crosshair-hz')
+            const crosshairVt = document.querySelector('#crosshair-vt')
+            crosshairHz.parentNode.removeChild(crosshairHz)
+            crosshairVt.parentNode.removeChild(crosshairVt)
         }
     }
 })

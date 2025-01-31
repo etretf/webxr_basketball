@@ -11,7 +11,6 @@ AFRAME.registerComponent('active-ball', {
         hasScored: {type: 'boolean', default: false},
         isHeld: {type: 'boolean', default: true},
         releaseTime: {type: 'number', default: 0},
-        hitFloor: {type: 'boolean', default: false}
     },
     init: function () {
         const CONTEXT_AF = this
@@ -24,34 +23,37 @@ AFRAME.registerComponent('active-ball', {
         CONTEXT_AF.objPos = CONTEXT_AF.el.object3D.position
 
         CONTEXT_AF.el.addEventListener('mouseup',  function () {
-            CONTEXT_AF.el.setAttribute('ammo-body', {type: 'dynamic', restitution: 1})
-            CONTEXT_AF.el.setAttribute('ammo-shape', {type: 'sphere'})
-            CONTEXT_AF.el.setAttribute('obb-collider', {})
-
-            const adjustedVal = CONTEXT_AF.data.value + 0.5
-            const yForceAdd = adjustedVal * 5
-            const zForceAdd = -2 + adjustedVal * 3
-
-            const vector = new THREE.Vector3(0, 0, 0)
-            CONTEXT_AF.el.object3D.getWorldDirection(vector)
-            vector.x = vector.x * -1
-            vector.y = (vector.y * -1) + yForceAdd
-            vector.z = (vector.z * -1) - zForceAdd
-            const force = new Ammo.btVector3(vector.x, vector.y, vector.z)
-            const pos = new Ammo.btVector3(CONTEXT_AF.objPos.x, CONTEXT_AF.objPos.y, CONTEXT_AF.objPos.z);
-            CONTEXT_AF.el.body.applyImpulse(force, pos);
-
-            CONTEXT_AF.data.isChanging = false
-            CONTEXT_AF.data.value = 0
-            CONTEXT_AF.rangeBar.setAttribute('position', "0 -0.3 -1")
-            CONTEXT_AF.rangeBar.setAttribute('visible', false)
-            CONTEXT_AF.playerEl.setAttribute('player', {isHoldingBall: false})
-            CONTEXT_AF.data.isHeld = false
+            if (CONTEXT_AF.data.isHeld) {
+                CONTEXT_AF.el.setAttribute('ammo-body', {type: 'dynamic', restitution: 1})
+                CONTEXT_AF.el.setAttribute('ammo-shape', {type: 'sphere'})
+                CONTEXT_AF.el.setAttribute('obb-collider', {})
+    
+                const adjustedVal = CONTEXT_AF.data.value + 0.5
+    
+                const vector = new THREE.Vector3(0, 0, 0)
+                CONTEXT_AF.el.object3D.getWorldDirection(vector)
+                vector.set(vector.x * -1, (vector.y - adjustedVal) * -1, vector.z * -1)
+                vector.multiplyScalar(adjustedVal * 3)
+                const force = new Ammo.btVector3(vector.x, vector.y, vector.z)
+                const pos = new THREE.Vector3(0, 0, 0)
+                CONTEXT_AF.el.object3D.getWorldPosition(pos)
+                const ammoPos = new Ammo.btVector3(pos.x, pos.y, pos.z)
+                CONTEXT_AF.el.body.applyImpulse(force, ammoPos);
+    
+                CONTEXT_AF.data.isChanging = false
+                CONTEXT_AF.data.value = 0
+                CONTEXT_AF.rangeBar.setAttribute('position', "0 -0.3 -1")
+                CONTEXT_AF.rangeBar.setAttribute('visible', false)
+                CONTEXT_AF.playerEl.setAttribute('player', {isHoldingBall: false})
+                CONTEXT_AF.data.isHeld = false
+            }
         })
 
         this.el.addEventListener('mousedown', function () {
-            CONTEXT_AF.data.isChanging = true
-            CONTEXT_AF.rangeBar.setAttribute('visible', true)
+            if (CONTEXT_AF.data.isHeld) {
+                CONTEXT_AF.data.isChanging = true
+                CONTEXT_AF.rangeBar.setAttribute('visible', true)
+            }
         })
     },
     tick: function () {
@@ -66,10 +68,12 @@ AFRAME.registerComponent('active-ball', {
 
         if (this.data.value > RANGE_UPPER) {
             this.data.isDecrementing = true
+            this.data.value = RANGE_UPPER
         }
 
         if (this.data.value < RANGE_LOWER) {
             this.data.isDecrementing = false
+            this.data.value = RANGE_LOWER
         }
 
         if (this.data.isHeld === false) {
@@ -80,7 +84,6 @@ AFRAME.registerComponent('active-ball', {
             this.data.releaseTime++
         }
 
-        console.log(this.data.value)
         const updatedRangePos = this.calculateRangeIndicatorPos(this.data.value)
         this.rangeBar.setAttribute('position', updatedRangePos)
     },
@@ -93,11 +96,11 @@ AFRAME.registerComponent('active-ball', {
         }
     },
 
-    convertToUIRange: function (val) {
-        return val * 0.1
-    },
-
     calculateRangeIndicatorPos: function (val) {
-        return `${this.rangeBarPos.x} ${this.rangeBarPos.y + val * 0.02} ${this.rangeBarPos.z}`
+        const {data: {isDecrementing}, rangeBarPos} = this
+        if (isDecrementing) {
+            return `${rangeBarPos.x} ${rangeBarPos.y - val * 0.01} ${rangeBarPos.z}`
+        }
+        return `${rangeBarPos.x} ${rangeBarPos.y + val * 0.01} ${rangeBarPos.z}`
     }
 })

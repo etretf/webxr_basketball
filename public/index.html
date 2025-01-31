@@ -11,16 +11,17 @@
       <script src="js/active-ball.js"></script>
       <script src="js/range-bar.js"></script>
       <script src="js/hoop-score.js"></script>
-      <script src="js/rackbox.js"></script>
+      <script src="js/rack.js"></script>
       <script src="js/player.js"></script>
       <script src="js/load-ball.js"></script>
-      <script src="js/shoot.js"></script>
+
+      <link rel="stylesheet" href="css/user-gesture.css">
     </head>
     <body>
       <a-scene physics="driver: ammo; debug: true; debugDrawMode: 1;">
         <!-- Assets -->
 
-        <a-assets timeout="5000">
+        <a-assets timeout="1000">
           <a-asset-item
             id="hoop_model"
             response-type="arraybuffer"
@@ -39,8 +40,14 @@
           <a-asset-item
             id="rack_model"
             response-type="arraybuffer"
-            src="assets/ball_rack.glb"
+            src="assets/rack.glb"
           ></a-asset-item>
+          <a-asset-item
+            id="basketball_model"
+            response-type="arraybuffer"
+            src="assets/basketball.glb"
+          ></a-asset-item>
+          <img id="crosshair_img" src="assets/crosshair.svg" style="background-color: transparent;" alt="White crosshair with intersecting horizontal and vertical bar" crossorigin="anonymous">
         </a-assets>
 
         <!-- Camera -->
@@ -56,7 +63,6 @@
             visible="false"
           ></a-triangle>
         </a-entity>
-
         <!-- Scene entities -->
 
         <a-entity
@@ -69,9 +75,10 @@
         <a-entity
           id="basketball_court"
           gltf-model="#court_model"
-          position="0 0.1 0"
+          position="0.02 0.1 0"
           rotation="0 90 0"
         ></a-entity>
+
         <a-plane
           id="court_ground"
           ammo-body="type: static; restitution: 0.8"
@@ -89,30 +96,49 @@
           ammo-body="type: static; restitution: 0.5;"
           ammo-shape="type: box;"
           geometry="depth: 0.11; height: 0.89; width: 1.63;"
-          position="-0.023 2.73 -5.234"
-        >
+          position="-0.021 2.73 -5.234"
+          visible="false"
+        ></a-box>
+        <a-box
+          id="pole"
+          position="-0.02 1.02 -6.18"
+          ammo-body="type: static: restitution: 05;"
+          ammo-shape="type: box;"
+          geometry="depth: 0.13; height: 1.85; width: 0.36"
+          visible="false"
+        ></a-box>
+        <a-box
+          id="base"
+          position="-0.024 0.16 -6.158"
+          ammo-body="type: static: restitution: 05;"
+          ammo-shape="type: box;"
+          geometry="depth: 0.37; height: 0.13; width: 1.07"
+          visible="false"
+        ></a-box>
+
         <!-- Score text -->
-          <a-entity
-            geometry="primitive: plane; width: 0.5; height: 0.5;"
-            material="color: black; side: double"
-            id="score-text"
-            position="1.5 0 0"
-            text="font: roboto; color: red; width: 1.5; align: center; wrapCount: 12;"
-          ></a-entity>
-        </a-box>
+        <a-entity
+          geometry="primitive: plane; width: 0.5; height: 0.5;"
+          material="color: black; side: double"
+          id="score-text"
+          position="1.5 2.73 -5.234"
+          text="font: roboto; color: red; width: 1.5; align: center; wrapCount: 12;"
+        ></a-entity>
 
         <!-- Shooting ball -->
 
-        <a-sphere
+        <!-- <a-entity
           id="active-ball"
+          geometry="primitive: sphere;"
           active-ball
           obb-collider
           ammo-body="type: dynamic; restitution: 1"
           ammo-shape="type: sphere"
+          gltf-model="#basketball_model"
           class="interactive"
           position="0 10 -4.8"
-          radius="0.2"
-        ></a-sphere>
+          scale="0.2 0.2 0.2"
+        ></a-entity> -->
 
         <!-- Boombox -->
 
@@ -128,48 +154,66 @@
         <a-entity
           id="rack"
           class="interactive"
-          rackbox
+          rack
           gltf-model="#rack_model"
           position="-1.5 0.09 -3"
           rotation="0 -30 0"
           material="color: #8eb8d4;"
         >
-          <a-sphere
-            pickup-ball
-            class="interactive"
-            radius="0.2"
-            position="0 1 0"
-          ></a-sphere>
-          <a-sphere
-            pickup-ball
-            class="interactive"
-            radius="0.2"
-            position="0 1 0.45"
-          ></a-sphere>
-          <a-sphere
-            pickup-ball
-            class="interactive"
-            radius="0.2"
-            position="0 1 -0.45"
-          ></a-sphere>
-          <a-sphere
-            pickup-ball  
-            class="interactive"
-            radius="0.2"
+        <!-- top rack -->
+          <a-entity
+            id="rack-top"
+            position="0 1.05 0"
+          >
+            <a-entity
+              id="test-ball"
+              pickup-ball
+              class="interactive"
+              gltf-model="#basketball_model"
+              scale="0.2 0.2 0.2"
+            ></a-entity>
+            <a-entity
+              pickup-ball
+              class="interactive"
+              gltf-model="#basketball_model"
+              position="0 0 0.45"
+              scale="0.2 0.2 0.2"
+            ></a-entity>
+            <a-entity
+              pickup-ball
+              class="interactive"
+              position="0 0 -0.45"
+              gltf-model="#basketball_model"
+              scale="0.2 0.2 0.2"
+            ></a-entity>
+          </a-entity>
+
+          <a-entity
+            id="rack-bottom"
             position="0 0.5 0"
-          ></a-sphere>
-          <a-sphere
-            pickup-ball  
-            class="interactive"
-            radius="0.2"
-            position="0 0.5 0.45"
-          ></a-sphere>
-          <a-sphere
-            pickup-ball
-            class="interactive"
-            radius="0.2"
-            position="0 0.5 -0.45"
-          ></a-sphere>
+          >
+            <a-entity
+              pickup-ball  
+              class="interactive"
+              position="0 0 0"
+              gltf-model="#basketball_model"
+              scale="0.2 0.2 0.2"
+            ></a-entity>
+            <a-entity
+              pickup-ball  
+              class="interactive"
+              position="0 0 0.45"
+              gltf-model="#basketball_model"
+              scale="0.2 0.2 0.2"
+            ></a-entity>
+            <a-entity
+              pickup-ball
+              class="interactive"
+              position="0 0 -0.45"
+              gltf-model="#basketball_model"
+              scale="0.2 0.2 0.2"
+            ></a-entity>
+          </a-entity>
         </a-entity>
 
 
@@ -195,9 +239,10 @@
             hoop-score
             material="color: white;"
             rotation="-90 0 0"
-            position="0 0 0"
-            radius="0.3"
+            position="0 0 0.2"
+            radius="0.2"
             height="0.06"
+            visible="false"
           ></a-cylinder>
         </a-torus>
         <a-entity
