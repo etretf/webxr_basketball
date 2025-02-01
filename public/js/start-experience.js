@@ -1,13 +1,6 @@
 AFRAME.registerComponent('start-experience', {
     init: function () {
-        document.querySelector('#user-gesture-button').style.display = 'block';
-
-        const CONTEXT_AF = this
-
-        CONTEXT_AF.gestureButton = document.querySelector('#user-gesture-button')
-
-        CONTEXT_AF.gestureButton.addEventListener('click', function () {
-            document.querySelector('#user-gesture-overlay').style.display = 'none'
-        })
+      // Load user gesture screen
+      document.querySelector('#user-gesture-button').style.display='block';
     }
-})
+});

@@ -1,50 +1,57 @@
 <!DOCTYPE html>
 <html>
     <head>
-      <title>Hello, WebXR! - A-Frame</title>
-      <meta name="description" content="Hello, WebXR! - A-Frame">
+      <title>WebXR Basketball</title>
+      <meta name="description" content="WebXR Basketball">
       <script src="https://aframe.io/releases/1.6.0/aframe.min.js"></script>
       <script src="https://unpkg.com/aframe-environment-component@1.3.3/dist/aframe-environment-component.min.js"></script>
       <script src="https://cdn.jsdelivr.net/gh/MozillaReality/ammo.js@8bbc0ea/builds/ammo.wasm.js"></script>
       <script src="https://cdn.jsdelivr.net/gh/c-frame/aframe-physics-system@v4.2.2/dist/aframe-physics-system.min.js"></script>
-      <script src="js/pickup-ball.js"></script>
       <script src="js/active-ball.js"></script>
-      <script src="js/hoop-score.js"></script>
-      <script src="js/rack.js"></script>
-      <script src="js/player.js"></script>
-      <script src="js/teleport-pad.js"></script>
-      <script src="js/sound-collider.js"></script>
       <script src="js/close-instructions.js"></script>
+      <script src="js/hoop-score.js"></script>
+      <script src="js/pickup-ball.js"></script>
+      <script src="js/player.js"></script>
+      <script src="js/sound-collider.js"></script>
+      <script src="js/sound-player.js"></script>
       <script src="js/start-experience.js"></script>
+      <script src="js/rack.js"></script>
+      <script src="js/teleport-pad.js"></script>
+      <script>
+        function start () {
+          //hide user-gesture overlay
+          document.querySelector('#user-gesture-overlay').style.display='none';
+          
+          //start music
+          const music = document.querySelector('#music');
+          music.components.sound.playSound();
+        }
+      </script>
 
+      <!-- Styles -->
       <link rel="stylesheet" href="css/user-gesture.css">
     </head>
     <body>
 
+      <!-- User gesture screen -->
       <div id="user-gesture-overlay">
         <div class="center">
-          <button id="user-gesture-button">Start experience</button>
+          <button id="user-gesture-button" onclick="start()">Start experience</button>
         </div>
       </div>
 
-      <a-scene start-experience physics="driver: ammo; debug: true; debugDrawMode: 1;">
+      <a-scene start-experience physics="driver: ammo">
         <!-- Assets -->
-
-        <a-assets timeout="1000">
-          <a-asset-item
-            id="hoop_model"
-            response-type="arraybuffer"
-            src="assets/hoop.glb"
-          ></a-asset-item>
+        <a-assets timeout="5000">
           <a-asset-item
             id="court_model"
             response-type="arraybuffer"
-            src="assets/court_mod3.glb"
+            src="assets/court.glb"
           ></a-asset-item>
           <a-asset-item
             id="boombox_model"
             response-type="arraybuffer"
-            src="assets/boombox.glb"
+            src="assets/1980s_boombox.glb"
           ></a-asset-item>
           <a-asset-item
             id="rack_model"
@@ -56,11 +63,6 @@
             response-type="arraybuffer"
             src="assets/basketball.glb"
           ></a-asset-item>
-          <a-asset-item
-            id="skybox_model"
-            response-type="arraybuffer"
-            src="assets/skybox.glb"
-          ></a-asset-item>
 
           <!-- Sound and music -->
           <audio id="ground_bounce" src="assets/basketball_ground_bounce.mp3" preload="auto" crossorigin="anonymous"></audio>
@@ -70,9 +72,10 @@
           <audio id="high_metal_hit" src="assets/high_metal_hit.mp3" preload="auto" crossorigin="anonymous"></audio>
           <audio id="score" src="assets/score.mp3" preload="auto" crossorigin="anonymous"></audio>
           <audio id="whoosh" src="assets/whoosh.mp3" preload="auto" crossorigin="anonymous"></audio>
+          <audio id="lofi_music" src="assets/lofi_music.mp3" preload="auto" crossorigin="anonymous"></audio>
         </a-assets>
 
-        <!-- Camera -->
+        <!-- Player -->
         <a-entity id="player"
           player
           camera
@@ -80,8 +83,13 @@
           look-controls
           position="0 1.6 -1.5"
         >
+          <!-- Sound and music entities -->
+          <a-entity id="music" sound="src: #lofi_music; autoplay: false; loop: true;"></a-entity>
           <a-entity id="shoot_sound" sound="src: #whoosh"></a-entity>
+          <a-entity id="score_sound" sound="src: #score"></a-entity>
+          <!-- Raycaster -->
           <a-entity id="player-raycaster" cursor="rayOrigin:mouse;" raycaster="far:20; interval:200; objects:.interactive"></a-entity>
+          <!-- Range arrow UI -->
           <a-triangle
             id="range-arrow"
             position="0 -0.3 -1"
@@ -93,10 +101,9 @@
           ></a-triangle>
         </a-entity>
 
-        <!-- Scene entities -->
+        <!-- Scene entities - start -->
 
         <!-- Teleport pads -->
-
         <a-cylinder
           teleport-pad
           id="tp-start"
@@ -126,8 +133,8 @@
           id="tp-right"
           position="3 0 -4.5"
         ></a-cylinder>
-        <!-- Court -->
 
+        <!-- Court -->
         <a-entity
           id="basketball_court"
           gltf-model="#court_model"
@@ -135,6 +142,7 @@
           rotation="0 90 0"
         ></a-entity>
 
+        <!-- Court ground plane -->
         <a-plane
           id="court_ground"
           obb-collider
@@ -148,7 +156,6 @@
         ></a-plane>
 
         <!-- Backboard collider -->
-         
         <a-box
           sound-collider
           obb-collider
@@ -159,6 +166,7 @@
           position="-0.021 2.73 -5.234"
           visible="false"
         ></a-box>
+        <!-- Pole collider -->
         <a-box
           id="pole"
           position="-0.02 1.02 -6.18"
@@ -167,6 +175,7 @@
           geometry="depth: 0.13; height: 1.85; width: 0.36"
           visible="false"
         ></a-box>
+        <!-- Pole base collider -->
         <a-box
           id="base"
           position="-0.024 0.16 -6.158"
@@ -185,30 +194,16 @@
           text="font: roboto; color: red; width: 1.5; align: center; wrapCount: 12;"
         ></a-entity>
 
-        <!-- Shooting ball -->
-
-        <!-- <a-entity
-          id="active-ball"
-          geometry="primitive: sphere;"
-          active-ball
-          obb-collider
-          ammo-body="type: dynamic; restitution: 1"
-          ammo-shape="type: sphere"
-          gltf-model="#basketball_model"
-          class="interactive"
-          position="0 10 -4.8"
-          scale="0.2 0.2 0.2"
-        ></a-entity> -->
-
         <!-- Boombox -->
-
         <a-entity
           id="boombox"
+          class="interactive"
+          sound-player
           gltf-model="#boombox_model"
-          position="4.38 0.447 -4.86"
+          position="4.35 0.447 -4.9"
+          rotation="0 -66 0"
+          scale="0.8 0.8 0.8"
           material="shader: flat"
-          scale="0.15 0.15 0.15"
-          rotation="0 -160 0"
         ></a-entity>
 
         <!-- Ball rack -->
@@ -221,7 +216,6 @@
           material="color: #8eb8d4;"
         >
           <!-- Instructions UI -->
-
           <a-plane
             id="instructions"
             position="0 2 0"
@@ -235,7 +229,8 @@
               width: 1.4;
               wrapCount: 30;
               "
-            >
+          >
+          <!-- Close button for instructions -->
             <a-plane
               close-instructions
               id="close-instructions"
@@ -247,11 +242,13 @@
               text="value: Close; color: black; wrapCount: 8; align: center;"
             ></a-plane>
         </a-plane>
-        <!-- top rack -->
+
+        <!-- Top rack -->
           <a-entity
             id="rack-top"
             position="0 1.05 0"
           >
+          <!-- Basketballs -->
             <a-entity
               id="test-ball"
               pickup-ball
@@ -275,10 +272,12 @@
             ></a-entity>
           </a-entity>
 
+          <!-- Bottom rack -->
           <a-entity
             id="rack-bottom"
             position="0 0.5 0"
           >
+          <!-- Basketballs -->
             <a-entity
               pickup-ball  
               class="interactive"
@@ -303,10 +302,7 @@
           </a-entity>
         </a-entity>
 
-
-
-
-        <!-- Hoop -->
+        <!-- Hoop collider -->
         <a-torus
           id="rim"
           sound-collider
@@ -323,7 +319,9 @@
           radius-tubular="0.03"
           segmentsRadial="24"
           segmentsTubular="24"
+          visible="false"
         >
+        <!-- Score tracking collider -->
           <a-cylinder
             obb-collider
             hoop-score
@@ -336,9 +334,11 @@
             visible="false"
           ></a-cylinder>
         </a-torus>
-        <a-entity
-          environment="groundColor: #519444; groundTexture: none;"
-        ></a-entity>
+
+        <!-- Environment and lights -->
+        <a-entity environment="groundTexture: none; groundColor: #3b792a"></a-entity>
+        <a-entity light="type: directional" position="0 0.75 -2"></a-entity>
+        <a-entity light="type: directional; intensity: 0.3" position="0 5 9"></a-entity>
       </a-scene>
     </body>
 </html>
